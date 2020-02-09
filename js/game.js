@@ -30,6 +30,10 @@ function borrarCanvas(){
   canvas.height = canheight;
 }
 
+//ClASES-----------------------------------------------------
+
+//----------------------------------------------------------
+
 //carga de imagenes e inicializacion---------------------
 let ninjaImg, enemyImg, buttonImg, heroImg, platImg, teclasImg;
 
