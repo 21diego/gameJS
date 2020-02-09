@@ -108,9 +108,9 @@ function randomCarril(){
 
 //DRAW PLATFOMRS-------------------------------------------
 function drawPlatforms(){
-  ctx.drawImage(platImg,platform.x,0,800,180,-10,suelos.mid+70,1200,70);
-  ctx.drawImage(platImg,platform.x,0,800,180,-10,suelos.top+70,1200,70);
-  ctx.drawImage(platImg,platform.x,0,800,180,-10,suelos.bot+70,1200,70);
+  ctx.drawImage(platImg,platform.x,0,800,180,-130,suelos.mid+70,1800,70);
+  ctx.drawImage(platImg,platform.x,0,800,180,-130,suelos.top+70,1800,70);
+  ctx.drawImage(platImg,platform.x,0,800,180,-130,suelos.bot+70,1800,70);
 }
 
 function movePlatform(){
