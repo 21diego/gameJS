@@ -31,15 +31,17 @@ function borrarCanvas(){
 }
 
 //carga de imagenes e inicializacion---------------------
-let ninjaImg, enemyImg, buttonImg, heroImg;
+let ninjaImg, enemyImg, buttonImg, heroImg, platImg;
 
 function cargarImages(){
   enemyImg = new Image();
   buttonImg = new Image();
   heroImg = new Image();
+  platImg = new Image();
   enemyImg.src = "img/villain2.png";
   buttonImg.src = "img/button.png";
   heroImg.src = "img/hero2.png";
+  platImg.src = "img/plattest.png";
 }
 
 let carriles = ["mid","top","bot"];
@@ -48,6 +50,7 @@ let hero = {"y":suelos.mid, "vely":0, "gravedad":2, "salto":28, "vymax":9, "salt
 let enemy = {"x":500,"y":suelos.mid,"velx":0}
 let buttons = {"bot":suelos.bot, "mid": suelos.mid, "top":suelos.top, "left":20}
 let pantalla = {"score":0}
+let platform = {"x":0, "y":0}
 let nivel1 = 15;
 
 function drawButtons(){
@@ -71,7 +74,7 @@ function updateFrameHero(){
   actualFrameH = ++actualFrameH % colsH;
   srcHX = actualFrameH*anchoH;
   srcHY = 0;
-  ctx.clearRect(100,hero.y,100,100);
+  //ctx.clearRect(100,hero.y,100,100);
   
 }
 
@@ -144,7 +147,24 @@ function mover(pos){
     
 //   }
 // }
+//DRAW PLATFOMRS-------------------------------------------
+function drawPlatforms(){
+  ctx.drawImage(platImg,platform.x,0,800,180,0,suelos.mid,1000,70);
+  ctx.drawImage(platImg,platform.x,0,800,180,0,suelos.top,1000,70);
+  ctx.drawImage(platImg,platform.x,0,800,180,0,suelos.bot,1000,70);
+}
 
+function movePlatform(){
+  if(platform.x > 1000){
+    platform.x = 0;
+  }
+  else{
+    platform.x += nivel1;
+  }
+}
+
+
+//---------------------------------------------------------
 
 //bucle principal
 const FPS = 15;
@@ -156,8 +176,11 @@ function principal(){
   iniciar();
   borrarCanvas();
   //gravedad();
-  drawButtons();
+  movePlatform()
+  drawPlatforms();
+  
   drawHero();
   moveEnemy();
   drawEnemy();
+  drawButtons();
 }
