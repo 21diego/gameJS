@@ -35,7 +35,7 @@ function cargarImages(){
   enemyImg = new Image();
   buttonImg = new Image();
   heroImg = new Image();
-  enemyImg.src = "img/villain.png";
+  enemyImg.src = "img/villain2.png";
   buttonImg.src = "img/button.png";
   heroImg.src = "img/hero2.png";
 }
@@ -45,7 +45,7 @@ let hero = {"y":suelos.mid, "vely":0, "gravedad":2, "salto":28, "vymax":9, "salt
 let enemy = {"x":500,"y":suelos.mid,"velx":0}
 let buttons = {"bot":suelos.bot, "mid": suelos.mid, "top":suelos.top, "left":20}
 let pantalla = {"score":0}
-let nivel1 = 5;
+let nivel1 = 15;
 
 function drawButtons(){
   ctx.drawImage(buttonImg,0,0,300,300,buttons.left,buttons.top,50,50);
@@ -57,32 +57,47 @@ function drawButtons(){
   ctx.fillText("Z", buttons.left, buttons.bot);
 }
 //ANIMACION HERO--------------------
-let anchoOrig = 2800, altoOrig = 193, cols = 20;
-let ancho = anchoOrig / cols;
-let alto = altoOrig;
-let sourceX = 0, sourceY = 0;
+let anchoOrigH = 2800, altoOrigH = 193, colsH = 20;
+let anchoH = anchoOrigH / colsH;
+let altoH = altoOrigH;
+let srcHX = 0, srcHY = 0;
 
-let actualFrame = 0;
 
-function updateFrame(){
-  actualFrame = ++actualFrame % cols;
-  sourceX = actualFrame*ancho;
-  sourceY = 0;
+let actualFrameH = 0;
+function updateFrameHero(){
+  actualFrameH = ++actualFrameH % colsH;
+  srcHX = actualFrameH*anchoH;
+  srcHY = 0;
   ctx.clearRect(100,hero.y,100,100);
   
 }
 
 function drawHero(){
-  updateFrame();
-  ctx.drawImage(heroImg,sourceX,sourceY,ancho,alto,100,hero.y,100,100);
+  updateFrameHero();
+  ctx.drawImage(heroImg,srcHX,srcHY,anchoH,altoH,100,hero.y,100,100);
 }
 
 
 //----------------------------------
+let anchoOrigE = 1120, altoOrigE = 256, colsE = 7;
+let anchoE = anchoOrigE / colsE;
+let altoE = altoOrigE;
+let srcEX = 0, srcEY = 0;
+
+
+let actualFrameE = 0;
+function updateFrameEnemy(){
+  actualFrameE = ++actualFrameE % colsE;
+  srcEX = actualFrameE*anchoE;
+  srcEY = 0;
+  //ctx.clearRect(100,enemy.y,100,100);
+  
+}
+
 
 function drawEnemy(){
-  
-  ctx.drawImage(enemyImg,0,0,600,500,enemy.x,enemy.y,100,90);
+  updateFrameEnemy()
+  ctx.drawImage(enemyImg,srcEX,srcEY,anchoE,altoE,enemy.x,enemy.y,100,120);
 }
 
 function moveEnemy(){
