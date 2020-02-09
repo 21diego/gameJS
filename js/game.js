@@ -31,7 +31,16 @@ function borrarCanvas(){
 }
 
 //ClASES-----------------------------------------------------
-
+class Enemy{
+  constructor(x,y,vel){
+    this.posx = x;
+    this.posy = y;
+    this.velocity=vel;
+  }
+  function cambiarCarril() {
+    
+  }
+}
 //----------------------------------------------------------
 
 //carga de imagenes e inicializacion---------------------
