@@ -1,13 +1,16 @@
 document.addEventListener("keydown",function(evento){
-  if(evento.keyCode == 65 || evento.keyCode == 97){
-    mover("mid");
+  if(!nivel.gameover){
+    if(evento.keyCode == 65 || evento.keyCode == 97){
+      mover("mid");
+    }
+    else if(evento.keyCode == 81 || evento.keyCode == 113){
+      mover("top");
+    }
+    else if(evento.keyCode == 90 || evento.keyCode == 122){
+      mover("bot");
+    }
   }
-  else if(evento.keyCode == 81 || evento.keyCode == 113){
-    mover("top");
-  }
-  else if(evento.keyCode == 90 || evento.keyCode == 122){
-    mover("bot");
-  }
+  
 });
 
 
@@ -57,7 +60,7 @@ let enemies = [];
 let buttons = {"bot":suelos.bot, "mid": suelos.mid, "top":suelos.top, "left":20}
 let pantalla = {"score":0}
 let platform = {"x":0, "y":0}
-let nivel = {"velocidad": 15, "enemigos":3};
+let nivel = {"velocidad": 15, "enemigos":3, "gameover":false};
 
 function drawButtons(){
   ctx.drawImage(teclasImg,0,0,338,284,buttons.left,buttons.top+25,50,50);
@@ -99,15 +102,17 @@ function movePlatform(){
     platform.x = 0;
   }
   else{
-    platform.x += nivel.velocidad-5;
+    platform.x += nivel.velocidad*1.1;
   }
 }
 
 function colision(hero, enemies) {
   for(let i = 0; i < enemies.length; i++){
     let actualEnemy = enemies[i];
-    if(hero.posy == actualEnemy.posy && hero.posx > (actualEnemy.posx)){
+    if(hero.posy == actualEnemy.posy && hero.posx+70 > actualEnemy.posx){
       console.log("chocaron");
+      nivel.velocidad = 0;
+      nivel.gameover = true;
     }
   }
   
@@ -115,11 +120,18 @@ function colision(hero, enemies) {
 //---------------------------------------------------------
 
 //bucle principal
-const FPS = 15;
-setInterval(function(){
-  principal();
-},1000/FPS);
+let FPS = 15;
+let termino = false;
+function ciclo(cond) {
+  if(!cond){
+    setInterval(function(){
+      principal();
+    },1000/FPS)
+  } 
+}
 
+
+ciclo(termino);
 iniciar()
 
 //FUNCION RANDOM ENTERO-----------------------
@@ -174,12 +186,16 @@ function updateFrame(char){
 }
 
 function drawHero(heroIN){
-  updateFrame(heroIN);
+  if(!nivel.gameover){
+    updateFrame(heroIN);
+  }
   ctx.drawImage(heroImg,heroIN.srcX,heroIN.srcY,heroIN.getAncho(),heroIN.getAlto(),heroIN.posx,heroIN.posy,100,100);
 }
 
 function drawEnemy(enemyIN){
-  updateFrame(enemyIN);
+  if(!nivel.gameover){
+    updateFrame(enemyIN);
+  }
   ctx.drawImage(enemyImg,enemyIN.srcX,enemyIN.srcY,enemyIN.getAncho(),enemyIN.getAlto(),enemyIN.posx,enemyIN.posy,100,120);
 }
 
@@ -189,7 +205,7 @@ function moveEnemy(enemyIN){
     enemyIN.posy = suelos[randomCarril()];
   }
   else{
-    enemyIN.posx -= nivel.velocidad+5;
+    enemyIN.posx -= nivel.velocidad;
   }
 }
 //creacion de enemigos
@@ -202,7 +218,7 @@ hero = new Hero(100,suelos.mid,1400,193,10);
 
 function principal(){
   borrarCanvas();
-  drawButtons();
+  
   movePlatform()
   drawPlatforms();
   colision(hero, enemies);
@@ -211,5 +227,5 @@ function principal(){
     moveEnemy(enemies[i]);
     drawEnemy(enemies[i]);
   }
-  
+  drawButtons();
 }
