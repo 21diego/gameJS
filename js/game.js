@@ -51,7 +51,7 @@ function cargarImages(){
 
 let carriles = ["mid","top","bot"];
 let suelos = {"bot":280, "mid": 170, "top":60};
-let hero = {"y":suelos.mid, "vely":0, "gravedad":2, "salto":28, "vymax":9, "saltando": false}
+let hero;
 let enemy = {"x":Math.round(Math.random()*1200),"y":suelos.mid,"velx":0}
 let enemies = [];
 let buttons = {"bot":suelos.bot, "mid": suelos.mid, "top":suelos.top, "left":20}
@@ -65,33 +65,14 @@ function drawButtons(){
   ctx.drawImage(teclasImg,676,0,338,284,buttons.left,buttons.bot+25,50,50);
 }
 //ANIMACION HERO--------------------
-let anchoOrigH = 1400, altoOrigH = 193, colsH = 10;
-let anchoH = anchoOrigH / colsH;
-let altoH = altoOrigH;
-let srcHX = 0, srcHY = 0;
 
-
-let actualFrameH = 0;
-function updateFrameHero(){
-  
-  actualFrameH = ++actualFrameH % colsH;
-  srcHX = actualFrameH*anchoH;
-  srcHY = 0;
-  
-  
-}
-
-function drawHero(){
-  updateFrameHero();
-  ctx.drawImage(heroImg,srcHX,srcHY,anchoH,altoH,100,hero.y,100,100);
-}
 function mover(pos){
   if(pos == "bot"){
-    hero.y = buttons.bot;
+    hero.posy = buttons.bot;
   }else if(pos == "mid"){
-    hero.y = buttons.mid;
+    hero.posy = buttons.mid;
   }else if(pos == "top"){
-    hero.y = buttons.top;
+    hero.posy = buttons.top;
   }
 }
 
@@ -122,7 +103,15 @@ function movePlatform(){
   }
 }
 
-
+function colision(hero, enemies) {
+  for(let i = 0; i < enemies.length; i++){
+    let actualEnemy = enemies[i];
+    if(hero.posy == actualEnemy.posy && hero.posx > (actualEnemy.posx)){
+      console.log("chocaron");
+    }
+  }
+  
+}
 //---------------------------------------------------------
 
 //bucle principal
@@ -158,19 +147,43 @@ class Enemy{
     return this.hOrig;
   }
 }
+
+class Hero{
+  constructor(x,y,anchoOrig,altoOrig,columns){
+    this.posx = x;
+    this.posy = y;
+    this.wOrig = anchoOrig;
+    this.hOrig = altoOrig;
+    this.cols = columns;
+    this.frame = 0;
+    this.srcX = 0;
+    this.srcY = 0; 
+  }
+  getAncho(){
+    return this.wOrig / this.cols;
+  }
+  getAlto(){
+    return this.hOrig;
+  }
+}
 //----------------------------------------------------------
-function updateFrameEnemy2(enemyIN){
-  enemyIN.frame = ++enemyIN.frame % enemyIN.cols;
-  enemyIN.srcX = enemyIN.frame*enemyIN.getAncho();
-  enemyIN.srcY = 0;
+function updateFrame(char){
+  char.frame = ++char.frame % char.cols;
+  char.srcX = char.frame*char.getAncho();
+  char.srcY = 0;
 }
 
-function drawEnemy2(enemyIN){
-  updateFrameEnemy2(enemyIN);
+function drawHero(heroIN){
+  updateFrame(heroIN);
+  ctx.drawImage(heroImg,heroIN.srcX,heroIN.srcY,heroIN.getAncho(),heroIN.getAlto(),heroIN.posx,heroIN.posy,100,100);
+}
+
+function drawEnemy(enemyIN){
+  updateFrame(enemyIN);
   ctx.drawImage(enemyImg,enemyIN.srcX,enemyIN.srcY,enemyIN.getAncho(),enemyIN.getAlto(),enemyIN.posx,enemyIN.posy,100,120);
 }
 
-function moveEnemy2(enemyIN){
+function moveEnemy(enemyIN){
   if(enemyIN.posx < -50){
     enemyIN.posx = canvas.width + getRandomInt(0,300);
     enemyIN.posy = suelos[randomCarril()];
@@ -182,17 +195,21 @@ function moveEnemy2(enemyIN){
 //creacion de enemigos
 for(let i = 0; i < nivel.enemigos; i++){
   let carril = suelos[randomCarril()];
-  enemies[i] = new Enemy(getRandomInt(1000,1600),carril,nivel.velocidad,1120,256,7);
+  enemies[i] = new Enemy(1500+i*250,carril,nivel.velocidad,1120,256,7);
 }
+//creacion heroe
+hero = new Hero(100,suelos.mid,1400,193,10);
 
 function principal(){
   borrarCanvas();
+  drawButtons();
   movePlatform()
   drawPlatforms();
-  drawHero();
+  colision(hero, enemies);
+  drawHero(hero);
   for(let i = 0; i < enemies.length; i++){
-    moveEnemy2(enemies[i]);
-    drawEnemy2(enemies[i]);
+    moveEnemy(enemies[i]);
+    drawEnemy(enemies[i]);
   }
-  drawButtons();
+  
 }
