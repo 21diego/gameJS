@@ -23,12 +23,15 @@ function iniciar(){
   canvas = document.querySelector("#canvas");
   ctx = canvas.getContext("2d");
   cargarImages();
+  borrarCanvas()
 }
 
 function borrarCanvas(){
   canvas.width = canwidth;
   canvas.height = canheight;
 }
+
+
 
 //carga de imagenes e inicializacion---------------------
 let ninjaImg, enemyImg, buttonImg, heroImg, platImg, teclasImg;
@@ -49,11 +52,12 @@ function cargarImages(){
 let carriles = ["mid","top","bot"];
 let suelos = {"bot":280, "mid": 170, "top":60};
 let hero = {"y":suelos.mid, "vely":0, "gravedad":2, "salto":28, "vymax":9, "saltando": false}
-let enemy = {"x":500,"y":suelos.mid,"velx":0}
+let enemy = {"x":Math.round(Math.random()*1200),"y":suelos.mid,"velx":0}
+let enemies = [];
 let buttons = {"bot":suelos.bot, "mid": suelos.mid, "top":suelos.top, "left":20}
 let pantalla = {"score":0}
 let platform = {"x":0, "y":0}
-let nivel1 = 15;
+let nivel = {"velocidad": 15, "enemigos":3};
 
 function drawButtons(){
   ctx.drawImage(teclasImg,0,0,338,284,buttons.left,buttons.top+25,50,50);
@@ -81,47 +85,6 @@ function drawHero(){
   updateFrameHero();
   ctx.drawImage(heroImg,srcHX,srcHY,anchoH,altoH,100,hero.y,100,100);
 }
-
-
-//-----------------------------------------------------
-//ANIMACION ENEMY--------------------------------------
-let anchoOrigE = 1120, altoOrigE = 256, colsE = 7;
-let anchoE = anchoOrigE / colsE;
-let altoE = altoOrigE;
-let srcEX = 0, srcEY = 0;
-
-
-let actualFrameE = 0;
-function updateFrameEnemy(){
-  actualFrameE = ++actualFrameE % colsE;
-  srcEX = actualFrameE*anchoE;
-  srcEY = 0;
-  //ctx.clearRect(100,enemy.y,100,100);
-  
-}
-
-//Elige un carril random 
-function randomCarril(){
-  let number = Math.round(Math.random()*2);
-  return carriles[number];
-}
-
-let carril = suelos[randomCarril()];
-function drawEnemy(){
-  updateFrameEnemy()
-  ctx.drawImage(enemyImg,srcEX,srcEY,anchoE,altoE,enemy.x,carril,100,120);
-}
-
-function moveEnemy(){
-  if(enemy.x < -50){
-    enemy.x = canvas.width + 50;
-    carril = suelos[randomCarril()];
-  }
-  else{
-    enemy.x -= nivel1+5;
-  }
-}
-
 function mover(pos){
   if(pos == "bot"){
     hero.y = buttons.bot;
@@ -132,20 +95,17 @@ function mover(pos){
   }
 }
 
-// function gravedad(){
-//   if(ninja.saltando == true){
-//     if((ninja.y - ninja.vely - ninja.gravedad) > 250){
-//       ninja.saltando = false;
-//       ninja.vely = 0;
-//       ninja.y = suelo;
-//     }
-//     else {
-//       ninja.vely -= ninja.gravedad;
-//       ninja.y -= ninja.vely;
-//     }
-    
-//   }
-// }
+//-----------------------------------------------------
+
+
+//ANIMACION ENEMY--------------------------------------
+
+//Elige un carril random 
+function randomCarril(){
+  let number = Math.round(Math.random()*2);
+  return carriles[number];
+}
+
 //DRAW PLATFOMRS-------------------------------------------
 function drawPlatforms(){
   ctx.drawImage(platImg,platform.x,0,800,180,-10,suelos.mid+70,1200,70);
@@ -158,7 +118,7 @@ function movePlatform(){
     platform.x = 0;
   }
   else{
-    platform.x += nivel1-5;
+    platform.x += nivel.velocidad-5;
   }
 }
 
@@ -171,15 +131,68 @@ setInterval(function(){
   principal();
 },1000/FPS);
 
+iniciar()
+
+//FUNCION RANDOM ENTERO-----------------------
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+//ClASES-----------------------------------------------------
+class Enemy{
+  constructor(x,y,vel,anchoOrig,altoOrig,columns){
+    this.posx = x;
+    this.posy = y;
+    this.velocity=vel;
+    this.wOrig = anchoOrig;
+    this.hOrig = altoOrig;
+    this.cols = columns;
+    this.frame = 0;
+    this.srcX = 0;
+    this.srcY = 0; 
+  }
+  getAncho(){
+    return this.wOrig / this.cols;
+  }
+  getAlto(){
+    return this.hOrig;
+  }
+}
+//----------------------------------------------------------
+function updateFrameEnemy2(enemyIN){
+  enemyIN.frame = ++enemyIN.frame % enemyIN.cols;
+  enemyIN.srcX = enemyIN.frame*enemyIN.getAncho();
+  enemyIN.srcY = 0;
+}
+
+function drawEnemy2(enemyIN){
+  updateFrameEnemy2(enemyIN);
+  ctx.drawImage(enemyImg,enemyIN.srcX,enemyIN.srcY,enemyIN.getAncho(),enemyIN.getAlto(),enemyIN.posx,enemyIN.posy,100,120);
+}
+
+function moveEnemy2(enemyIN){
+  if(enemyIN.posx < -50){
+    enemyIN.posx = canvas.width + getRandomInt(0,300);
+    enemyIN.posy = suelos[randomCarril()];
+  }
+  else{
+    enemyIN.posx -= nivel.velocidad+5;
+  }
+}
+//creacion de enemigos
+for(let i = 0; i < nivel.enemigos; i++){
+  let carril = suelos[randomCarril()];
+  enemies[i] = new Enemy(getRandomInt(1000,1600),carril,nivel.velocidad,1120,256,7);
+}
+
 function principal(){
-  iniciar();
   borrarCanvas();
-  //gravedad();
   movePlatform()
   drawPlatforms();
-  
   drawHero();
-  moveEnemy();
-  drawEnemy();
+  for(let i = 0; i < enemies.length; i++){
+    moveEnemy2(enemies[i]);
+    drawEnemy2(enemies[i]);
+  }
   drawButtons();
 }
