@@ -41,7 +41,7 @@ function cargarImages(){
   teclasImg = new Image();
   enemyImg.src = "img/villain2.png";
   buttonImg.src = "img/button.png";
-  heroImg.src = "img/hero2.png";
+  heroImg.src = "img/hero.png";
   platImg.src = "img/plattest.png";
   teclasImg.src = "img/teclas.png"
 }
@@ -61,7 +61,7 @@ function drawButtons(){
   ctx.drawImage(teclasImg,676,0,338,284,buttons.left,buttons.bot+25,50,50);
 }
 //ANIMACION HERO--------------------
-let anchoOrigH = 2800, altoOrigH = 193, colsH = 20;
+let anchoOrigH = 1400, altoOrigH = 193, colsH = 10;
 let anchoH = anchoOrigH / colsH;
 let altoH = altoOrigH;
 let srcHX = 0, srcHY = 0;
@@ -69,10 +69,11 @@ let srcHX = 0, srcHY = 0;
 
 let actualFrameH = 0;
 function updateFrameHero(){
+  
   actualFrameH = ++actualFrameH % colsH;
   srcHX = actualFrameH*anchoH;
   srcHY = 0;
-  //ctx.clearRect(100,hero.y,100,100);
+  
   
 }
 
