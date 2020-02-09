@@ -14,7 +14,7 @@ document.addEventListener("keydown",function(evento){
 
 //----------------------------------------------------
 //CANVAS----------------------------------------------
-let canwidth = 700;
+let canwidth = 1000;
 let canheight = 400;
 
 let canvas, context;
