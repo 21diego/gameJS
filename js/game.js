@@ -31,21 +31,23 @@ function borrarCanvas(){
 }
 
 //carga de imagenes e inicializacion---------------------
-let ninjaImg, enemyImg, buttonImg, heroImg, platImg;
+let ninjaImg, enemyImg, buttonImg, heroImg, platImg, teclasImg;
 
 function cargarImages(){
   enemyImg = new Image();
   buttonImg = new Image();
   heroImg = new Image();
   platImg = new Image();
+  teclasImg = new Image();
   enemyImg.src = "img/villain2.png";
   buttonImg.src = "img/button.png";
   heroImg.src = "img/hero2.png";
   platImg.src = "img/plattest.png";
+  teclasImg.src = "img/teclas.png"
 }
 
 let carriles = ["mid","top","bot"];
-let suelos = {"bot":280, "mid": 180, "top":80};
+let suelos = {"bot":280, "mid": 170, "top":60};
 let hero = {"y":suelos.mid, "vely":0, "gravedad":2, "salto":28, "vymax":9, "saltando": false}
 let enemy = {"x":500,"y":suelos.mid,"velx":0}
 let buttons = {"bot":suelos.bot, "mid": suelos.mid, "top":suelos.top, "left":20}
@@ -54,13 +56,9 @@ let platform = {"x":0, "y":0}
 let nivel1 = 15;
 
 function drawButtons(){
-  ctx.drawImage(buttonImg,0,0,300,300,buttons.left,buttons.top,50,50);
-  ctx.drawImage(buttonImg,0,0,300,300,buttons.left,buttons.mid,50,50);
-  ctx.drawImage(buttonImg,0,0,300,300,buttons.left,buttons.bot,50,50);
-  ctx.font = "30px Arial";
-  ctx.fillText("Q", buttons.left, buttons.top);
-  ctx.fillText("A", buttons.left, buttons.mid);
-  ctx.fillText("Z", buttons.left, buttons.bot);
+  ctx.drawImage(teclasImg,0,0,338,284,buttons.left,buttons.top+25,50,50);
+  ctx.drawImage(teclasImg,338,0,338,284,buttons.left,buttons.mid+25,50,50);
+  ctx.drawImage(teclasImg,676,0,338,284,buttons.left,buttons.bot+25,50,50);
 }
 //ANIMACION HERO--------------------
 let anchoOrigH = 2800, altoOrigH = 193, colsH = 20;
@@ -119,7 +117,7 @@ function moveEnemy(){
     carril = suelos[randomCarril()];
   }
   else{
-    enemy.x -= nivel1;
+    enemy.x -= nivel1+5;
   }
 }
 
@@ -149,17 +147,17 @@ function mover(pos){
 // }
 //DRAW PLATFOMRS-------------------------------------------
 function drawPlatforms(){
-  ctx.drawImage(platImg,platform.x,0,800,180,0,suelos.mid,1000,70);
-  ctx.drawImage(platImg,platform.x,0,800,180,0,suelos.top,1000,70);
-  ctx.drawImage(platImg,platform.x,0,800,180,0,suelos.bot,1000,70);
+  ctx.drawImage(platImg,platform.x,0,800,180,-10,suelos.mid+70,1200,70);
+  ctx.drawImage(platImg,platform.x,0,800,180,-10,suelos.top+70,1200,70);
+  ctx.drawImage(platImg,platform.x,0,800,180,-10,suelos.bot+70,1200,70);
 }
 
 function movePlatform(){
-  if(platform.x > 1000){
+  if(platform.x > 200){
     platform.x = 0;
   }
   else{
-    platform.x += nivel1;
+    platform.x += nivel1-5;
   }
 }
 
