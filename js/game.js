@@ -13,6 +13,7 @@ document.addEventListener("keydown",function(evento){
 
 
 //----------------------------------------------------
+//CANVAS----------------------------------------------
 let canwidth = 700;
 let canheight = 400;
 
@@ -29,6 +30,7 @@ function borrarCanvas(){
   canvas.height = canheight;
 }
 
+//carga de imagenes e inicializacion---------------------
 let ninjaImg, enemyImg, buttonImg, heroImg;
 
 function cargarImages(){
@@ -40,6 +42,7 @@ function cargarImages(){
   heroImg.src = "img/hero2.png";
 }
 
+let carriles = ["mid","top","bot"];
 let suelos = {"bot":280, "mid": 180, "top":80};
 let hero = {"y":suelos.mid, "vely":0, "gravedad":2, "salto":28, "vymax":9, "saltando": false}
 let enemy = {"x":500,"y":suelos.mid,"velx":0}
@@ -78,7 +81,8 @@ function drawHero(){
 }
 
 
-//----------------------------------
+//-----------------------------------------------------
+//ANIMACION ENEMY--------------------------------------
 let anchoOrigE = 1120, altoOrigE = 256, colsE = 7;
 let anchoE = anchoOrigE / colsE;
 let altoE = altoOrigE;
@@ -94,15 +98,22 @@ function updateFrameEnemy(){
   
 }
 
+//Elige un carril random 
+function randomCarril(){
+  let number = Math.round(Math.random()*2);
+  return carriles[number];
+}
 
+let carril = suelos[randomCarril()];
 function drawEnemy(){
   updateFrameEnemy()
-  ctx.drawImage(enemyImg,srcEX,srcEY,anchoE,altoE,enemy.x,enemy.y,100,120);
+  ctx.drawImage(enemyImg,srcEX,srcEY,anchoE,altoE,enemy.x,carril,100,120);
 }
 
 function moveEnemy(){
   if(enemy.x < -50){
     enemy.x = canvas.width + 50;
+    carril = suelos[randomCarril()];
   }
   else{
     enemy.x -= nivel1;
