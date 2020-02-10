@@ -2,13 +2,13 @@
 function listenerGame() {
   document.addEventListener("keydown",function(evento){
     if(!nivel.gameover){
-      if(evento.keyCode == 65 || evento.keyCode == 97){
+      if(evento.keyCode == 87 || evento.keyCode == 119){
         mover("mid");
       }
       else if(evento.keyCode == 81 || evento.keyCode == 113){
         mover("top");
       }
-      else if(evento.keyCode == 90 || evento.keyCode == 122){
+      else if(evento.keyCode == 69 || evento.keyCode == 101){
         mover("bot");
       }
     }
@@ -96,7 +96,7 @@ let enemy = {"x":Math.round(Math.random()*1200),"y":suelos.mid,"velx":0}
 let enemies = [];
 let buttons = {"bot":suelos.bot, "mid": suelos.mid, "top":suelos.top, "left":20}
 let platform = {"x":0, "y":0}
-let nivel = {"velocidad": 15, "enemigos":3, "gameover":false,"score":0};
+let nivel = {"velocidad": 15, "enemigos":5, "gameover":false,"score":0};
 
 
 function drawButtons(){
@@ -154,6 +154,11 @@ function colision(hero, enemies) {
 function upScore() {
   if(nivel.velocidad){
     nivel.score++;
+  }
+}
+function dificultad(){
+  if(nivel.score %50==0){
+    nivel.velocidad+=2;
   }
 }
 function pantalla() {
@@ -315,11 +320,13 @@ function volverMenu(){
 //bucle principal
 let FPS = 15;
 let id;
-let audios = [new Audio('audio/tusa8bit.mp3'),new Audio('audio/goteo8bit.mp3'),new Audio('audio/takeonme8bit.mp3'),]
+let audios = [new Audio('audio/tusa8bit.mp3'),new Audio('audio/takeonme8bit.mp3'),new Audio('audio/goteo8bit.mp3'),
+new Audio('audio/radioactive.mp3'),new Audio('audio/master_of_puppets.mp3'),new Audio('audio/Pumped_Up_Kicks_8_Bit_Universe_Tribute_to_Foster_The_People.mp3'),
+new Audio('audio/power_rangers.mp3')]
 let audio;
 function empezarGame(){
   inicial.style.display = "none";
-  audio = audios[getRandomInt(0,3)];
+  audio = audios[getRandomInt(0,7)];
   audio.play();
   id = setInterval(function(){
     principal();
@@ -341,6 +348,7 @@ function principal(){
   }
   drawButtons();
   upScore();
+  dificultad();
   pantalla();
 }
 let inicial = document.querySelector("#menu");
