@@ -10,23 +10,36 @@ document.addEventListener("keydown",function(evento){
       mover("bot");
     }
   }
+  else{
+    if(evento.keyCode == 82 || evento.keyCode == 114){
+      canvasEnd.style.display = "none";
+      canvas.style.opacity = "1";
+      nivel.velocidad = 15;
+      destroyEnemies();
+      createEnemies();
+      nivel.gameover = false;
+    }
+    else if(evento.keyCode == 27){
+      alert("pantalla principal");
+    }
+    
+  }
   
 });
-
-
-
 //----------------------------------------------------
 //CANVAS----------------------------------------------
 let canwidth = 1000;
 let canheight = 400;
 
-let canvas, context;
+let canvas, ctx, canvasEnd, ctxEnd;
 
 function iniciar(){
-  canvas = document.querySelector("#canvas");
+  canvas = document.querySelector("#canvas-game");
   ctx = canvas.getContext("2d");
   cargarImages();
-  borrarCanvas()
+  canvasEnd = document.querySelector("#canvas-end");
+  ctxEnd = canvasEnd.getContext("2d");
+  borrarCanvas();
 }
 
 function borrarCanvas(){
@@ -37,7 +50,7 @@ function borrarCanvas(){
 
 
 //carga de imagenes e inicializacion---------------------
-let ninjaImg, enemyImg, buttonImg, heroImg, platImg, teclasImg;
+let ninjaImg, enemyImg, buttonImg, heroImg, platImg, teclasImg,gameoverImg, restartImg, backImg;
 
 function cargarImages(){
   enemyImg = new Image();
@@ -45,11 +58,17 @@ function cargarImages(){
   heroImg = new Image();
   platImg = new Image();
   teclasImg = new Image();
+  gameoverImg = new Image();
+  restartImg = new Image();
+  backImg = new Image();
   enemyImg.src = "img/villain2.png";
   buttonImg.src = "img/button.png";
   heroImg.src = "img/hero.png";
   platImg.src = "img/plattest.png";
-  teclasImg.src = "img/teclas.png"
+  teclasImg.src = "img/teclas.png";
+  gameoverImg.src = "img/gameover.png";
+  restartImg.src = "img/restart.png";
+  backImg.src = "img/back.png";
 }
 
 let carriles = ["mid","top","bot"];
@@ -58,16 +77,15 @@ let hero;
 let enemy = {"x":Math.round(Math.random()*1200),"y":suelos.mid,"velx":0}
 let enemies = [];
 let buttons = {"bot":suelos.bot, "mid": suelos.mid, "top":suelos.top, "left":20}
-let pantalla = {"score":0}
 let platform = {"x":0, "y":0}
-let nivel = {"velocidad": 15, "enemigos":3, "gameover":false};
+let nivel = {"velocidad": 15, "enemigos":3, "gameover":false,"score":0};
 
 function drawButtons(){
   ctx.drawImage(teclasImg,0,0,338,284,buttons.left,buttons.top+25,50,50);
   ctx.drawImage(teclasImg,338,0,338,284,buttons.left,buttons.mid+25,50,50);
   ctx.drawImage(teclasImg,676,0,338,284,buttons.left,buttons.bot+25,50,50);
 }
-//ANIMACION HERO--------------------
+//acciones HERO--------------------
 
 function mover(pos){
   if(pos == "bot"){
@@ -79,10 +97,6 @@ function mover(pos){
   }
 }
 
-//-----------------------------------------------------
-
-
-//ANIMACION ENEMY--------------------------------------
 
 //Elige un carril random 
 function randomCarril(){
@@ -109,7 +123,7 @@ function movePlatform(){
 function colision(hero, enemies) {
   for(let i = 0; i < enemies.length; i++){
     let actualEnemy = enemies[i];
-    if(hero.posy == actualEnemy.posy && hero.posx+70 > actualEnemy.posx){
+    if(hero.posy == actualEnemy.posy && (hero.posx+70 > actualEnemy.posx && hero.posx < actualEnemy.posx+70)){
       console.log("chocaron");
       nivel.velocidad = 0;
       nivel.gameover = true;
@@ -118,21 +132,19 @@ function colision(hero, enemies) {
   
 }
 //---------------------------------------------------------
-
-//bucle principal
-let FPS = 15;
-let termino = false;
-function ciclo(cond) {
-  if(!cond){
-    setInterval(function(){
-      principal();
-    },1000/FPS)
-  } 
+function pantalla() {
+  ctx.font = "30px impact";
+  ctx.fillStyle = "#ff0000";
+  ctx.fillText(`Score: ${nivel.score}`, 800,60);
+  if(nivel.gameover){
+    canvas.style.opacity = "0.5";
+    canvasEnd.style.display = "block";
+    ctxEnd.drawImage(gameoverImg,0,0,567,284,0,0,300,100);
+    ctxEnd.drawImage(restartImg,0,0,600,40,0,100,300,20);
+    ctxEnd.drawImage(backImg,0,0,600,40,0,120,300,20);
+  }
 }
 
-
-ciclo(termino);
-iniciar()
 
 //FUNCION RANDOM ENTERO-----------------------
 function getRandomInt(min, max) {
@@ -190,6 +202,7 @@ function drawHero(heroIN){
     updateFrame(heroIN);
   }
   ctx.drawImage(heroImg,heroIN.srcX,heroIN.srcY,heroIN.getAncho(),heroIN.getAlto(),heroIN.posx,heroIN.posy,100,100);
+  
 }
 
 function drawEnemy(enemyIN){
@@ -209,16 +222,31 @@ function moveEnemy(enemyIN){
   }
 }
 //creacion de enemigos
-for(let i = 0; i < nivel.enemigos; i++){
-  let carril = suelos[randomCarril()];
-  enemies[i] = new Enemy(1500+i*250,carril,nivel.velocidad,1120,256,7);
+function createEnemies() {
+  for(let i = 0; i < nivel.enemigos; i++){
+    let carril = suelos[randomCarril()];
+    enemies[i] = new Enemy(1500+i*250,carril,nivel.velocidad,1120,256,7);
+  }
 }
+
+function destroyEnemies() {
+  enemies = []
+}
+
+createEnemies();
 //creacion heroe
 hero = new Hero(100,suelos.mid,1400,193,10);
 
+//bucle principal
+let FPS = 15;
+setInterval(function(){
+  principal();
+},1000/FPS)
+
+iniciar()
+
 function principal(){
   borrarCanvas();
-  
   movePlatform()
   drawPlatforms();
   colision(hero, enemies);
@@ -228,4 +256,5 @@ function principal(){
     drawEnemy(enemies[i]);
   }
   drawButtons();
+  pantalla();
 }
