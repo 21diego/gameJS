@@ -1,32 +1,48 @@
-document.addEventListener("keydown",function(evento){
-  if(!nivel.gameover){
-    if(evento.keyCode == 65 || evento.keyCode == 97){
-      mover("mid");
+//PANTALLA JUEGO------------------------------------------------
+function listenerGame() {
+  document.addEventListener("keydown",function(evento){
+    if(!nivel.gameover){
+      if(evento.keyCode == 65 || evento.keyCode == 97){
+        mover("mid");
+      }
+      else if(evento.keyCode == 81 || evento.keyCode == 113){
+        mover("top");
+      }
+      else if(evento.keyCode == 90 || evento.keyCode == 122){
+        mover("bot");
+      }
     }
-    else if(evento.keyCode == 81 || evento.keyCode == 113){
-      mover("top");
-    }
-    else if(evento.keyCode == 90 || evento.keyCode == 122){
-      mover("bot");
-    }
-  }
-  else{
-    if(evento.keyCode == 82 || evento.keyCode == 114){
-      canvasEnd.style.display = "none";
-      canvas.style.opacity = "1";
-      nivel.velocidad = 15;
-      destroyEnemies();
-      createEnemies();
-      nivel.score = 0;
-      nivel.gameover = false;
-    }
-    else if(evento.keyCode == 27){
-      alert("pantalla principal");
+    else{
+      if(evento.keyCode == 82 || evento.keyCode == 114){
+        canvasEnd.style.display = "none";
+        canvas.style.opacity = "1";
+        nivel.velocidad = 15;
+        destroyEnemies();
+        createEnemies();
+        nivel.score = 0;
+        nivel.gameover = false;
+        audio = audios[getRandomInt(0,3)];
+        audio.play();
+      }
+      else if(evento.keyCode == 27){
+        clearInterval(id);
+        canvasEnd.style.display = "none";
+        canvas.style.display = "none";
+        canvas.style.opacity = "1";
+        nivel.velocidad = 15;
+        destroyEnemies();
+        createEnemies();
+        nivel.score = 0;
+        nivel.gameover = false;
+        audio.pause();
+        menu.style.display = "block";
+      }
+      
     }
     
-  }
-  
-});
+  });
+}
+
 //----------------------------------------------------
 //CANVAS----------------------------------------------
 let canwidth = 1000;
@@ -36,6 +52,7 @@ let canvas, ctx, canvasEnd, ctxEnd;
 
 function iniciar(){
   canvas = document.querySelector("#canvas-game");
+  canvas.style.display = "block";
   ctx = canvas.getContext("2d");
   cargarImages();
   canvasEnd = document.querySelector("#canvas-end");
@@ -81,6 +98,7 @@ let buttons = {"bot":suelos.bot, "mid": suelos.mid, "top":suelos.top, "left":20}
 let platform = {"x":0, "y":0}
 let nivel = {"velocidad": 15, "enemigos":3, "gameover":false,"score":0};
 
+
 function drawButtons(){
   ctx.drawImage(teclasImg,0,0,338,284,buttons.left,buttons.top+25,50,50);
   ctx.drawImage(teclasImg,338,0,338,284,buttons.left,buttons.mid+25,50,50);
@@ -125,9 +143,9 @@ function colision(hero, enemies) {
   for(let i = 0; i < enemies.length; i++){
     let actualEnemy = enemies[i];
     if(hero.posy == actualEnemy.posy && (hero.posx+70 > actualEnemy.posx && hero.posx < actualEnemy.posx+70)){
-      console.log("chocaron");
       nivel.velocidad = 0;
       nivel.gameover = true;
+      audio.pause();
     }
   }
   
@@ -243,15 +261,75 @@ createEnemies();
 //creacion heroe
 hero = new Hero(100,suelos.mid,1400,193,10);
 
+//------------------------------------------------------------------------------------
+//PANTALLA CREDITOS-------------------------------------------------------------------
+let canvasCred, ctxCred;
+function credits() {
+  var audio = new Audio('audio/old8bit.mp3');
+  audio.play();
+  canvasCred = document.querySelector("#canvas-credits");
+  canvasCred.addEventListener("click",volverMenu);
+  ctxCred = canvasCred.getContext("2d");
+  canvasCred.style.display = "block";
+  let elem = [];
+  let diff = 50, min = 300;
+  for(let i = 0; i < 8; i++){
+    let pos = min + i*diff;
+    elem[i] = {
+      "posx":100,
+      "posy":pos,
+      "image": new Image()
+    }
+  }
+  elem[0].posx = 0;
+  elem[0].image.src = "img/createdby.png";
+  elem[1].image.src = "img/nahuj.png";
+  elem[2].image.src = "img/lucas.png";
+  elem[3].image.src = "img/nahul.png";
+  elem[4].image.src = "img/rocio.png";
+  elem[5].image.src = "img/eduardo.png";
+  elem[6].image.src = "img/gian.png";
+  elem[7].image.src = "img/diego.png";
+  
+  
+  let idcred = setInterval(function(){
+    ctxCred.clearRect(0,0,1000,400);
+    for(let i = 0; i < elem.length; i++){
+      ctxCred.drawImage(elem[i].image,0,0,600,40,elem[i].posx,elem[i].posy,250,25);
+      elem[i].posy -= 2;
+      
+    }
+    if(elem[7].posy < -50){
+      console.log("llego");
+      audio.pause();
+      clearInterval(idcred);
+    }
+  },1000/15);
+  
+}
+
+function volverMenu(){
+  canvasCred.style.display = "none";
+}
+//------------------------------------------------------------------------------------
 //bucle principal
 let FPS = 15;
-setInterval(function(){
-  principal();
-},1000/FPS)
-
-iniciar()
+let id;
+let audios = [new Audio('audio/tusa8bit.mp3'),new Audio('audio/goteo8bit.mp3'),new Audio('audio/takeonme8bit.mp3'),]
+let audio;
+function empezarGame(){
+  inicial.style.display = "none";
+  audio = audios[getRandomInt(0,3)];
+  audio.play();
+  id = setInterval(function(){
+    principal();
+  },1000/FPS);
+  iniciar()
+}
 
 function principal(){
+  
+  listenerGame();
   borrarCanvas();
   movePlatform()
   drawPlatforms();
@@ -265,3 +343,8 @@ function principal(){
   upScore();
   pantalla();
 }
+let inicial = document.querySelector("#menu");
+
+document.querySelector("#menuitem-game").addEventListener("click",empezarGame);
+document.querySelector("#menuitem-credits").addEventListener("click",credits);
+

@@ -3,16 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="stylesheet" href="css/style.css">
   <title>Juego</title>
 </head>
 <body>
-  <div class="contenedor">
-
+  <div id="container">
+    <header id="header">
+      <h2>HELLO</h2>
+      <img id="logo" src="img/pikachumeme.png">
+      <h2>WORLD!</h2>
+    </header>
+    <!-- <nav>
+      <a href="#">MENU</a>
+      <a id="link-credits" href="#"></a>
+      <a id="link-credits" href="#">CREDITS</a>
+    </nav> -->
+    <div class="contenedor-pantallas">
+      <div id="menu">
+        <div id="titulo"></div>
+        <div id="menubox">
+          <div id="menuitem-game"></div>
+          <div id="menuitem-credits"></div>
+        </div>
+      </div>
+      <canvas id="canvas-game"></canvas>
+      <canvas id="canvas-end"></canvas>
+      <canvas id="canvas-credits"></canvas>
+    </div>
   </div>
-  <canvas id="canvas-game"></canvas>
-  <canvas id="canvas-end"></canvas>
-  <script src="js/game.js"></script>
-</body>
-</html>
+    <footer></footer>
+    <script src="js/main.js"></script>
+    <script src="js/menu.js"></script>
+    <script src="js/game.js"></script>
+  </body>
+  </html>

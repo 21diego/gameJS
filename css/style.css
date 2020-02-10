@@ -1,8 +1,89 @@
-.contenedor {
-  position: relative;
+@import url('https://fonts.googleapis.com/css?family=Russo+One&display=swap');
+
+body{
+  margin: 0;
+  padding: 0;
 }
+#container{
+  
+  width: 100%;
+  height: 100%;
+}
+/*HEADER*/
+header{
+  background-color: rgb(253, 255, 164);
+  height: 20vh;
+  font-family: 'Russo One', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#logo{
+  width: 25vh;
+  height: 20vh;
+  margin: 0 2em;
+}
+header h2 {
+  font-size: 4em;
+  margin-top: 1em;
+}
+
+
+.contenedor-pantallas {
+  position: relative;
+  width: 1000px;
+  height: 400px;
+  margin: 0 auto;
+}
+#menu {
+  width: 1000px;
+  height: 400px;
+  position: absolute;
+  border:2px solid black;
+  background-image: url(../gif/0.gif);
+  background-size: cover;
+  background-position-y: center;
+  animation: corte 1s;
+}
+#titulo{
+  width: 100%;
+  height: 200px;
+  background-image: url(../img/titulo.png);
+  animation: aparecer 2s;
+  
+}
+#menubox{
+  display: flex;
+  height: 50%;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+#menuitem-game {
+  background-image: url("../img/startgame.png");
+  width: 350px;
+  height: 40px;
+  animation: aparecer 3s;
+}
+#menuitem-credits {
+  background-image: url("../img/credits.png");
+  width: 350px;
+  height: 40px;
+  animation: aparecer 4s;
+}
+
+#menuitem-game:hover{
+  background-image: url("../img/startgamehover.png");
+  cursor: pointer;
+}
+#menuitem-credits:hover{
+  background-image: url("../img/creditshover.png");
+  cursor: pointer;
+}
+
 canvas {
   border:2px solid black;
+  display: none;
   position: absolute;
   width: 1000px;
   height: 400px;
@@ -19,4 +100,36 @@ canvas {
   left: 250px;
   top: 50px;
   z-index: 15;
+}
+#canvas-credits{
+  z-index: 35;
+  background-color: black;
+} 
+
+footer{
+  background-color: rgb(253, 255, 164);
+  width: 100%;
+  height: calc(100vh - 20vh - 400px);
+}
+@keyframes corte {
+  from{background-image: url(../gif/0.gif);}
+  12.5%{background-image: url(../gif/1.gif)}
+  25%{background-image: url(../gif/2.gif)}
+  37.5%{background-image: url(../gif/3.gif)}
+  50%{background-image: url(../gif/4.gif);}
+  62.5%{background-image: url(../gif/5.gif)}
+  75%{background-image: url(../gif/6.gif)}
+  87.5%{background-image: url(../gif/7.gif)}
+  to{
+    background-image: url(../gif/8.gif);
+  }
+}
+
+@keyframes aparecer{
+  from,50%{
+    opacity: 0;
+  }
+  to{
+    opacity: 1;
+  }
 }
