@@ -17,6 +17,7 @@ document.addEventListener("keydown",function(evento){
       nivel.velocidad = 15;
       destroyEnemies();
       createEnemies();
+      nivel.score = 0;
       nivel.gameover = false;
     }
     else if(evento.keyCode == 27){
@@ -132,6 +133,11 @@ function colision(hero, enemies) {
   
 }
 //---------------------------------------------------------
+function upScore() {
+  if(nivel.velocidad){
+    nivel.score++;
+  }
+}
 function pantalla() {
   ctx.font = "30px impact";
   ctx.fillStyle = "#ff0000";
@@ -256,5 +262,6 @@ function principal(){
     drawEnemy(enemies[i]);
   }
   drawButtons();
+  upScore();
   pantalla();
 }
